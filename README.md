@@ -49,9 +49,9 @@ npm install
 
 # 4. Start the development server
 # When working on private network
-npx expo start
+npx  start
 # When working on public network or the test device is on another network
-npx expo start --tunnel
+npx  start --tunnel
 # 5. Scan QR code with Expo Go app or press 'a' for Android emulator
 ```
 
@@ -63,7 +63,7 @@ npx expo start --tunnel
 ### 🖥️ Testing on Emulator
 ```bash
 # Start development server
-expo start
+ start
 
 # Press 'a' for Android emulator
 # Press 'i' for iOS simulator
@@ -174,7 +174,7 @@ ProjectAtlas/
 # Start development server
 npm start
 # or
-expo start
+npx expo start
 
 # Start on specific platform
 npm run android    # Android emulator
@@ -182,8 +182,8 @@ npm run ios        # iOS simulator
 npm run web        # Web browser
 
 # Build for production
-expo build:android # Android APK/AAB
-expo build:ios     # iOS IPA
+npx expo build:android # Android APK/AAB
+npx expo build:ios     # iOS IPA
 
 # TypeScript checking
 npm run type-check
@@ -200,25 +200,25 @@ npm run lint
 ### Development Testing
 ```bash
 # Test on physical device
-expo start → Scan QR code with Expo Go
+npx expo start → Scan QR code with Expo Go
 
 # Test on emulator
-expo start → Press 'a' (Android) or 'i' (iOS)
+npx expo start → Press 'a' (Android) or 'i' (iOS)
 ```
 
 ### Production Builds
 ```bash
 # Build for Android Play Store
-expo build:android --type app-bundle
+npx expo build:android --type app-bundle
 
 # Build for iOS App Store
-expo build:ios --type archive
+npx expo build:ios --type archive
 ```
 
 ### TestFlight Deployment (iOS)
 ```bash
 # Build iOS app
-expo build:ios
+npx expo build:ios
 
 # Upload to TestFlight
 # (Expo will provide instructions after build)
