@@ -53,17 +53,8 @@ export default function InstructionsScreen() {
       return;
     }
 
-    // Navigate to recording screen with age parameter
     console.log(`Starting recording for age: ${age}`);
-    // For now, just alert. Next we'll create the recording screen
-    //    alert.alert(
-    //      '🎙️ Ready to Record!',
-    //      `age: ${age}\nMicrophone: Ready\n\nNext: Recording screen will be added!`
-    //    );
-
-    // Navigate to recording screen with age param
-     router.push({ pathname: '/recording', params: { age } });
-
+    router.push({ pathname: '/recording', params: { age } });
   };
 
   const handleBack = () => {
@@ -71,118 +62,124 @@ export default function InstructionsScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar style="light" backgroundColor="transparent" translucent />
+    <View style={styles.container}>
+      <StatusBar style="light" backgroundColor="#667eea" translucent={false} />
 
       <LinearGradient
         colors={['#667eea', '#764ba2']}
         style={styles.gradient}
       >
-        <View style={styles.content}>
-          {/* Header with Back Button */}
-          <View style={styles.header}>
-            <TouchableOpacity onPress={handleBack} style={styles.backButton}>
-              <Text style={styles.backButtonText}>←</Text>
-            </TouchableOpacity>
-          </View>
-
-          {/* Main Content */}
-          <View style={styles.mainContent}>
-            {/* Timer Display */}
-            <View style={styles.timerContainer}>
-              <Text style={styles.timerText}>60</Text>
-              <Text style={styles.timerLabel}>seconds</Text>
+        <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
+          <View style={styles.content}>
+            {/* Header with Back Button */}
+            <View style={styles.header}>
+              <TouchableOpacity onPress={handleBack} style={styles.backButton}>
+                <Text style={styles.backButtonText}>←</Text>
+              </TouchableOpacity>
             </View>
 
-            <Text style={styles.title}>
-              Name as many animals as you can in 60 seconds
-            </Text>
+            {/* Main Content */}
+            <View style={styles.mainContent}>
+              {/* Timer Display */}
+              <View style={styles.timerContainer}>
+                <Text style={styles.timerText}>60</Text>
+                <Text style={styles.timerLabel}>seconds</Text>
+              </View>
 
-            <Text style={styles.instruction}>
-              Speak clearly - our AI agents will handle the rest
-            </Text>
+              <Text style={styles.title}>
+                Name as many animals as you can in 60 seconds
+              </Text>
 
-            {/* AI Agents Working Preview */}
-            <View style={styles.agentsContainer}>
-              <Text style={styles.agentsTitle}>5 AI Agents Ready:</Text>
-              <View style={styles.agentsList}>
-                {[
-                  '🗣️ Speech Agent - Audio processing',
-                  '⚡ Efficiency Agent - Repetition detection',
-                  '🧩 Flexibility Agent - Category analysis',
-                  '🎯 Strategy Agent - Approach evaluation',
-                  '💡 Insight Agent - Personalized tips'
-                ].map((agent, index) => (
-                  <Text key={index} style={styles.agentItem}>{agent}</Text>
-                ))}
+              <Text style={styles.instruction}>
+                Speak clearly - our AI agents will handle the rest
+              </Text>
+
+              {/* AI Agents Working Preview */}
+              <View style={styles.agentsContainer}>
+                <Text style={styles.agentsTitle}>5 AI Agents Ready:</Text>
+                <View style={styles.agentsList}>
+                  {[
+                    '🗣️ Speech Agent - Audio processing',
+                    '⚡ Efficiency Agent - Repetition detection',
+                    '🧩 Flexibility Agent - Category analysis',
+                    '🎯 Strategy Agent - Approach evaluation',
+                    '💡 Insight Agent - Personalized tips'
+                  ].map((agent, index) => (
+                    <Text key={index} style={styles.agentItem}>{agent}</Text>
+                  ))}
+                </View>
+              </View>
+
+              {/* Microphone Status */}
+              <View style={styles.micStatusContainer}>
+                {checkingPermission ? (
+                  <>
+                    <View style={styles.loadingIndicator} />
+                    <Text style={styles.micStatusText}>Checking microphone...</Text>
+                  </>
+                ) : (
+                  <>
+                    <View style={[
+                      styles.micStatusIndicator,
+                      { backgroundColor: microphonePermission ? '#4CAF50' : '#FF5722' }
+                    ]} />
+                    <Text style={styles.micStatusText}>
+                      {microphonePermission ? '🎤 Microphone Ready' : '❌ Microphone Permission Needed'}
+                    </Text>
+                  </>
+                )}
+              </View>
+
+              {/* Age Display */}
+              <View style={styles.ageInfo}>
+                <Text style={styles.ageInfoText}>Age: {age} • Personalized scoring ready</Text>
               </View>
             </View>
 
-            {/* Microphone Status */}
-            <View style={styles.micStatusContainer}>
-              {checkingPermission ? (
-                <>
-                  <View style={styles.loadingIndicator} />
-                  <Text style={styles.micStatusText}>Checking microphone...</Text>
-                </>
-              ) : (
-                <>
-                  <View style={[
-                    styles.micStatusIndicator,
-                    { backgroundColor: microphonePermission ? '#4CAF50' : '#FF5722' }
-                  ]} />
-                  <Text style={styles.micStatusText}>
-                    {microphonePermission ? '🎤 Microphone Ready' : '❌ Microphone Permission Needed'}
-                  </Text>
-                </>
+            {/* Start Button */}
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity
+                style={[
+                  styles.startButton,
+                  (!microphonePermission || checkingPermission) && styles.disabledButton
+                ]}
+                onPress={handleStartRecording}
+                activeOpacity={0.8}
+                disabled={!microphonePermission || checkingPermission}
+              >
+                <Text style={[
+                  styles.startButtonText,
+                  (!microphonePermission || checkingPermission) && styles.disabledButtonText
+                ]}>
+                  {checkingPermission ? 'Checking...' : 'Start Recording'}
+                </Text>
+              </TouchableOpacity>
+
+              {!microphonePermission && !checkingPermission && (
+                <TouchableOpacity
+                  style={styles.permissionButton}
+                  onPress={checkMicrophonePermission}
+                >
+                  <Text style={styles.permissionButtonText}>Grant Microphone Access</Text>
+                </TouchableOpacity>
               )}
             </View>
-
-            {/* Age Display */}
-            <View style={styles.ageInfo}>
-              <Text style={styles.ageInfoText}>Age: {age} • Personalized scoring ready</Text>
-            </View>
           </View>
-
-          {/* Start Button */}
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity
-              style={[
-                styles.startButton,
-                (!microphonePermission || checkingPermission) && styles.disabledButton
-              ]}
-              onPress={handleStartRecording}
-              activeOpacity={0.8}
-              disabled={!microphonePermission || checkingPermission}
-            >
-              <Text style={[
-                styles.startButtonText,
-                (!microphonePermission || checkingPermission) && styles.disabledButtonText
-              ]}>
-                {checkingPermission ? 'Checking...' : 'Start Recording'}
-              </Text>
-            </TouchableOpacity>
-
-            {!microphonePermission && !checkingPermission && (
-              <TouchableOpacity
-                style={styles.permissionButton}
-                onPress={checkMicrophonePermission}
-              >
-                <Text style={styles.permissionButtonText}>Grant Microphone Access</Text>
-              </TouchableOpacity>
-            )}
-          </View>
-        </View>
+        </SafeAreaView>
       </LinearGradient>
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#667eea',
   },
   gradient: {
+    flex: 1,
+  },
+  safeArea: {
     flex: 1,
   },
   content: {
@@ -190,7 +187,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
   },
   header: {
-    paddingTop: 20,
+    paddingTop: 10,
     paddingBottom: 20,
   },
   backButton: {
@@ -210,14 +207,13 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 20,
   },
   timerContainer: {
     alignItems: 'center',
-    marginBottom: 32,
+    marginBottom: 24,
     backgroundColor: 'rgba(255, 255, 255, 0.15)',
-    paddingVertical: 20,
-    paddingHorizontal: 40,
+    paddingVertical: 16,
+    paddingHorizontal: 32,
     borderRadius: 20,
     borderWidth: 2,
     borderColor: 'rgba(255, 255, 255, 0.3)',
@@ -229,75 +225,75 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   timerLabel: {
-    fontSize: 16,
+    fontSize: 14,
     color: '#E8E8E8',
     textAlign: 'center',
     marginTop: 4,
   },
   title: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: 'bold',
     color: '#FFFFFF',
     textAlign: 'center',
-    lineHeight: 32,
-    marginBottom: 24,
+    lineHeight: 30,
+    marginBottom: 16,
     paddingHorizontal: 10,
   },
   instruction: {
-    fontSize: 18,
+    fontSize: 16,
     color: '#E8E8E8',
     textAlign: 'center',
-    lineHeight: 24,
-    marginBottom: 32,
+    lineHeight: 22,
+    marginBottom: 24,
     paddingHorizontal: 10,
   },
   agentsContainer: {
-    marginBottom: 32,
+    marginBottom: 24,
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    paddingVertical: 16,
-    paddingHorizontal: 20,
+    paddingVertical: 14,
+    paddingHorizontal: 18,
     borderRadius: 15,
     width: '100%',
   },
   agentsTitle: {
-    fontSize: 16,
+    fontSize: 14,
     color: '#FFFFFF',
     fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 12,
+    marginBottom: 10,
   },
   agentsList: {
-    gap: 6,
+    gap: 4,
   },
   agentItem: {
-    fontSize: 14,
+    fontSize: 12,
     color: '#E8E8E8',
-    lineHeight: 20,
+    lineHeight: 18,
   },
   micStatusContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    paddingVertical: 12,
-    paddingHorizontal: 20,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
     borderRadius: 25,
-    marginBottom: 24,
+    marginBottom: 16,
   },
   micStatusIndicator: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-    marginRight: 12,
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    marginRight: 10,
   },
   loadingIndicator: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
+    width: 10,
+    height: 10,
+    borderRadius: 5,
     backgroundColor: '#FFC107',
-    marginRight: 12,
+    marginRight: 10,
   },
   micStatusText: {
-    fontSize: 16,
+    fontSize: 14,
     color: '#FFFFFF',
     fontWeight: '500',
   },
@@ -308,13 +304,13 @@ const styles = StyleSheet.create({
     borderRadius: 15,
   },
   ageInfoText: {
-    fontSize: 14,
+    fontSize: 12,
     color: '#D0D0D0',
     textAlign: 'center',
   },
   buttonContainer: {
-    paddingBottom: 40,
-    gap: 16,
+    paddingBottom: 20,
+    gap: 12,
   },
   startButton: {
     backgroundColor: '#FFFFFF',
