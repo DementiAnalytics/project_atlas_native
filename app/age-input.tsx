@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Dimensions,
+  ScrollView,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -34,72 +35,74 @@ export default function AgeInputScreen() {
         style={styles.gradient}
       >
         <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
-          <View style={styles.content}>
-            {/* Header with Back Button */}
-            <View style={styles.header}>
-              <TouchableOpacity onPress={handleBack} style={styles.backButton}>
-                <Text style={styles.backButtonText}>←</Text>
-              </TouchableOpacity>
+          {/* Header with Back Button */}
+          <View style={styles.header}>
+            <TouchableOpacity onPress={handleBack} style={styles.backButton}>
+              <Text style={styles.backButtonText}>←</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Scrollable Content */}
+          <ScrollView
+            style={styles.scrollView}
+            contentContainerStyle={styles.scrollContent}
+            showsVerticalScrollIndicator={false}
+          >
+            <Text style={styles.title}>What's your age?</Text>
+
+            <Text style={styles.subtitle}>
+              Our AI agents need this for personalized brain wellness scoring
+            </Text>
+
+            {/* Age Display */}
+            <View style={styles.ageDisplayContainer}>
+              <Text style={styles.ageNumber}>{age}</Text>
+              <Text style={styles.ageLabel}>years old</Text>
             </View>
 
-            {/* Main Content */}
-            <View style={styles.mainContent}>
-              <Text style={styles.title}>What's your age?</Text>
+            {/* Age Slider */}
+            <View style={styles.sliderContainer}>
+              <Slider
+                style={styles.slider}
+                minimumValue={18}
+                maximumValue={99}
+                value={age}
+                onValueChange={(value) => setAge(Math.round(value))}
+                minimumTrackTintColor="#FFFFFF"
+                maximumTrackTintColor="rgba(255, 255, 255, 0.3)"
+                thumbTintColor="#FFFFFF"
+              />
 
-              <Text style={styles.subtitle}>
-                Our AI agents need this for personalized brain wellness scoring
-              </Text>
-
-              {/* Age Display */}
-              <View style={styles.ageDisplayContainer}>
-                <Text style={styles.ageNumber}>{age}</Text>
-                <Text style={styles.ageLabel}>years old</Text>
+              {/* Age Range Labels */}
+              <View style={styles.rangeLabels}>
+                <Text style={styles.rangeLabel}>18</Text>
+                <Text style={styles.rangeLabel}>99</Text>
               </View>
+            </View>
 
-              {/* Age Slider */}
-              <View style={styles.sliderContainer}>
-                <Slider
-                  style={styles.slider}
-                  minimumValue={18}
-                  maximumValue={99}
-                  value={age}
-                  onValueChange={(value) => setAge(Math.round(value))}
-                  minimumTrackTintColor="#FFFFFF"
-                  maximumTrackTintColor="rgba(255, 255, 255, 0.3)"
-                  thumbTintColor="#FFFFFF"
-                />
-
-                {/* Age Range Labels */}
-                <View style={styles.rangeLabels}>
-                  <Text style={styles.rangeLabel}>18</Text>
-                  <Text style={styles.rangeLabel}>99</Text>
-                </View>
-              </View>
-
-              {/* Age Categories Helper */}
-              <View style={styles.categoryHelper}>
-                <Text style={styles.categoryText}>
-                  {age < 25 ? '🧠 Young Adult' :
-                    age < 40 ? '💼 Adult' :
-                      age < 60 ? '🎯 Middle Age' : '🌟 Senior'}
-                </Text>
-              </View>
-
-              <Text style={styles.disclaimer}>
-                Required for accurate scoring
+            {/* Age Categories Helper */}
+            <View style={styles.categoryHelper}>
+              <Text style={styles.categoryText}>
+                {age < 25 ? '🧠 Young Adult' :
+                  age < 40 ? '💼 Adult' :
+                    age < 60 ? '🎯 Middle Age' : '🌟 Senior'}
               </Text>
             </View>
 
-            {/* Continue Button */}
-            <View style={styles.buttonContainer}>
-              <TouchableOpacity
-                style={styles.continueButton}
-                onPress={handleContinue}
-                activeOpacity={0.8}
-              >
-                <Text style={styles.continueButtonText}>Continue</Text>
-              </TouchableOpacity>
-            </View>
+            <Text style={styles.disclaimer}>
+              Required for accurate scoring
+            </Text>
+          </ScrollView>
+
+          {/* Continue Button - Fixed at bottom */}
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity
+              style={styles.continueButton}
+              onPress={handleContinue}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.continueButtonText}>Continue</Text>
+            </TouchableOpacity>
           </View>
         </SafeAreaView>
       </LinearGradient>
@@ -118,13 +121,10 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
   },
-  content: {
-    flex: 1,
-    paddingHorizontal: 24,
-  },
   header: {
     paddingTop: 10,
-    paddingBottom: 20,
+    paddingBottom: 10,
+    paddingHorizontal: 24,
   },
   backButton: {
     width: 44,
@@ -139,11 +139,13 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontWeight: 'bold',
   },
-  mainContent: {
+  scrollView: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 20,
+  },
+  scrollContent: {
+    paddingHorizontal: 24,
+    paddingTop: 20,
+    paddingBottom: 20,
   },
   title: {
     fontSize: 36,
@@ -157,18 +159,19 @@ const styles = StyleSheet.create({
     color: '#E8E8E8',
     textAlign: 'center',
     lineHeight: 24,
-    marginBottom: 40,
+    marginBottom: 32,
     paddingHorizontal: 10,
   },
   ageDisplayContainer: {
     alignItems: 'center',
-    marginBottom: 40,
+    marginBottom: 32,
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
     paddingVertical: 20,
     paddingHorizontal: 48,
     borderRadius: 20,
     borderWidth: 2,
     borderColor: 'rgba(255, 255, 255, 0.3)',
+    alignSelf: 'center',
   },
   ageNumber: {
     fontSize: 72,
@@ -184,8 +187,7 @@ const styles = StyleSheet.create({
   },
   sliderContainer: {
     width: '100%',
-    paddingHorizontal: 20,
-    marginBottom: 32,
+    marginBottom: 24,
   },
   slider: {
     width: '100%',
@@ -203,11 +205,12 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   categoryHelper: {
-    marginBottom: 20,
+    marginBottom: 16,
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 20,
+    alignSelf: 'center',
   },
   categoryText: {
     fontSize: 18,
@@ -220,9 +223,13 @@ const styles = StyleSheet.create({
     color: '#D0D0D0',
     textAlign: 'center',
     fontStyle: 'italic',
+    marginBottom: 20,
   },
   buttonContainer: {
-    paddingBottom: 20,
+    paddingHorizontal: 24,
+    paddingTop: 16,
+    paddingBottom: 16,
+    backgroundColor: 'transparent',
   },
   continueButton: {
     backgroundColor: '#FFFFFF',
