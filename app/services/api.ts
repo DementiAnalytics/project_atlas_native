@@ -1,33 +1,25 @@
-// TODO: Add metric tracking
-
-// TODO: Implement network detection for development and production
-// import * as Network from 'expo-network';
-
-// const getApiBaseUrl = async () => {
-//   if (__DEV__) {
-//     try {
-//       const ipAddress = await Network.getIpAddressAsync();
-//       return `http://${ipAddress}:8000`;
-//     } catch (error) {
-//       // Fallback to hardcoded IP if network detection fails
-//       console.log('Network detection failed, using fallback IP');
-//       return 'http://192.168.106.98:8000';
-//     }
-//   } else {
-//     return "production_url";
-//   }
-// };
-
+// app/services/api.ts
 import { API_CONFIG } from "../config/api";
+import { generateMockData } from "./mockData";
 
 const API_BASE_URL = API_CONFIG.baseUrl;
 
-console.log(`BACKEND FROM: ${API_BASE_URL}`);
+// Silent logging for demo mode
+const log = (...args: any[]) => {
+  if (API_CONFIG.logRequests) {
+    console.log(...args);
+  }
+};
+
+const logError = (...args: any[]) => {
+  if (API_CONFIG.logErrors) {
+    console.error(...args);
+  }
+};
 
 export interface AnalyzeRequest {
   text: string;
 }
-
 
 export interface AnalyzeResponse {
   animal_count: number;
@@ -42,7 +34,6 @@ export interface TranscriptionResponse {
   confidence: number;
 }
 
-
 class ApiService {
   private baseUrl: string;
 
@@ -50,11 +41,18 @@ class ApiService {
     this.baseUrl = baseUrl;
   }
 
-  // Transcribe audio file to text
   async transcribeAudio(audioUri: string): Promise<TranscriptionResponse> {
+    // If using mock data, return immediately
+    if (API_CONFIG.useMockData) {
+      log('[MOCK] Using mock transcription data');
+      await this.simulateDelay(1000);
+      const mockData = generateMockData(audioUri);
+      return mockData.transcription;
+    }
+
     try {
-      console.log('[DEBUG] Starting audio transcription...');
-      
+      log('[API] Starting audio transcription...');
+
       const formData = new FormData();
       formData.append('file', {
         uri: audioUri,
@@ -68,33 +66,38 @@ class ApiService {
       });
 
       if (!response.ok) {
-        const errorText = await response.text();
-        console.error('[ERROR] Response not OK:', response.status, errorText)
         throw new Error(`Transcription failed: ${response.statusText}`);
       }
 
       const result = await response.json();
-      console.log('[DEBUG] Transcription completed:', result);
-      
-      return {text: result.transcription, confidence: 1.0};
+      log('[API] Transcription completed');
+
+      return { text: result.text, confidence: 1.0 };
     } catch (error) {
-      console.error('[ERROR] Transcription error:', error);
-      
-      // Fallback: For demo purposes, return a mock transcription
-      // TODO: Change to an actual fallback procedure
-      console.log('[ERROR] Using fallback transcription for demo...');
-      return {
-        text: "cat dog bird fish elephant lion tiger bear wolf deer rabbit squirrel mouse rat hamster guinea pig",
-        confidence: 0.85
-      };
+      // In demo mode, silently fall back to mock data
+      if (API_CONFIG.suppressErrors) {
+        log('[DEMO] Network error, using mock data');
+        const mockData = generateMockData(audioUri);
+        return mockData.transcription;
+      } else {
+        logError('[ERROR] Transcription error:', error);
+        throw error;
+      }
     }
   }
 
-  // Analyze transcribed text
   async analyzeText(text: string): Promise<AnalyzeResponse> {
+    // If using mock data, return immediately
+    if (API_CONFIG.useMockData) {
+      log('[MOCK] Using mock analysis data');
+      await this.simulateDelay(1500);
+      const mockData = generateMockData();
+      return mockData.analysis;
+    }
+
     try {
-      console.log('[DEBUG] Starting cognitive analysis...');
-      
+      log('[API] Starting cognitive analysis...');
+
       const response = await fetch(`${this.baseUrl}/analyze`, {
         method: 'POST',
         headers: {
@@ -108,67 +111,61 @@ class ApiService {
       }
 
       const result = await response.json();
-      console.log('[DEBUG] Analysis completed:', result);
-      
+      log('[API] Analysis completed');
+
       return result;
     } catch (error) {
-      console.error('[ERROR] Analysis error:', error);
-      
-      // Fallback: Return mock analysis data for demo
-      // TODO: Change to an actual fallback procedure
-      console.log('[ERROR] Using fallback analysis for demo...');
-      return {
-        animal_count: 15,
-        repetitions: 2,
-        memory_score: 85,
-        brain_health_score: 85,
-        report: `🧠 AI Cognitive Assessment - Animal Naming (Demo)
------------------------------------------------
-Total entries:     17
-Unique animals:    15
-Repetitions:       2
-Memory score:      85 / 100
-Brain health score:85 / 100
-
-Unique list: cat, dog, bird, fish, elephant, lion, tiger, bear, wolf, deer, rabbit, squirrel, mouse, rat, hamster
-
-Disclaimer: Demo-only. Not clinical-grade. Not for diagnosis.`
-      };
+      // In demo mode, silently fall back to mock data
+      if (API_CONFIG.suppressErrors) {
+        log('[DEMO] Network error, using mock data');
+        const mockData = generateMockData();
+        return mockData.analysis;
+      } else {
+        logError('[ERROR] Analysis error:', error);
+        throw error;
+      }
     }
   }
 
-  // Combined function: transcribe and analyze
   async transcribeAndAnalyze(audioUri: string): Promise<{
     transcription: TranscriptionResponse;
     analysis: AnalyzeResponse;
   }> {
-    console.log('🔄 Starting transcription and analysis pipeline...');
-    
-    // Step 1: Transcribe audio
+    log('🔄 Starting transcription and analysis pipeline...');
+
     const transcription = await this.transcribeAudio(audioUri);
-    
-    // Step 2: Analyze the transcribed text
     const analysis = await this.analyzeText(transcription.text);
-    
-    console.log('✅ Pipeline completed successfully');
-    
+
+    log('✅ Pipeline completed successfully');
+
     return {
       transcription,
       analysis,
     };
   }
 
-  // Check if API server is running
   async checkServerHealth(): Promise<boolean> {
+    if (API_CONFIG.useMockData) {
+      log('[MOCK] Server health check bypassed (using mock data)');
+      return true;
+    }
+
     try {
-      const response = await fetch(`${this.baseUrl}/docs`);
+      const response = await fetch(`${this.baseUrl}/docs`, {
+        method: 'GET',
+      });
       return response.ok;
     } catch (error) {
-      console.log('[ERROR] API server not available:', error);
+      if (!API_CONFIG.suppressErrors) {
+        logError('[ERROR] API server not available:', error);
+      }
       return false;
     }
   }
+
+  private simulateDelay(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
 }
 
-// Export singleton instance
 export const apiService = new ApiService();

@@ -16,76 +16,82 @@ const { width, height } = Dimensions.get('window');
 
 export default function WelcomeScreen() {
   const handleStartAssessment = () => {
-     console.log('🧠 Starting Project Atlas assessment...');
-     // Navigate to age input screen
-     router.push('/age-input');
+    console.log('🧠 Starting Project Atlas assessment...');
+    // Navigate to age input screen
+    router.push('/age-input');
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar style="light" backgroundColor="transparent" translucent />
+    <View style={styles.container}>
+      <StatusBar style="light" backgroundColor="#667eea" translucent={false} />
 
       <LinearGradient
         colors={['#667eea', '#764ba2']}
         style={styles.gradient}
       >
-        <View style={styles.content}>
-          {/* Logo Area */}
-          <View style={styles.logoSection}>
-            <Text style={styles.logoText}>Project Atlas™</Text>
-            <Text style={styles.tagline}>
-              Agentic AI Agents for Brain Wellness Revolution
-            </Text>
-          </View>
-
-          {/* Main Content */}
-          <View style={styles.mainContent}>
-            <Text style={styles.description}>
-              60-second cognitive assessment powered by 5 AI agents
-            </Text>
-
-            {/* AI Agents Preview */}
-            <View style={styles.agentsPreview}>
-              {[
-                '🗣️ Speech Agent',
-                '⚡ Efficiency Agent',
-                '🧩 Flexibility Agent',
-                '🎯 Strategy Agent',
-                '💡 Insight Agent'
-              ].map((agent, index) => (
-                <Text key={index} style={styles.agentItem}>{agent}</Text>
-              ))}
+        <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
+          <View style={styles.content}>
+            {/* Logo Area */}
+            <View style={styles.logoSection}>
+              <Text style={styles.logoText}>Project Atlas™</Text>
+              <Text style={styles.tagline}>
+                Agentic AI Agents for Brain Wellness Revolution
+              </Text>
             </View>
 
-            <TouchableOpacity
-              style={styles.startButton}
-              onPress={handleStartAssessment}
-              activeOpacity={0.8}
-            >
-              <Text style={styles.startButtonText}>Start Assessment</Text>
-            </TouchableOpacity>
+            {/* Main Content */}
+            <View style={styles.mainContent}>
+              <Text style={styles.description}>
+                60-second cognitive assessment powered by 5 AI agents
+              </Text>
 
-            <Text style={styles.disclaimer}>
-              Anonymous • No signup required
-            </Text>
-          </View>
+              {/* AI Agents Preview */}
+              <View style={styles.agentsPreview}>
+                {[
+                  '🗣️ Speech Agent',
+                  '⚡ Efficiency Agent',
+                  '🧩 Flexibility Agent',
+                  '🎯 Strategy Agent',
+                  '💡 Insight Agent'
+                ].map((agent, index) => (
+                  <Text key={index} style={styles.agentItem}>{agent}</Text>
+                ))}
+              </View>
 
-          {/* Version Info */}
-          <View style={styles.bottomInfo}>
-            <Text style={styles.versionText}>Powered by Kevin Mekulu's Research</Text>
-            <Text style={styles.versionText}>version 0.1.0</Text>
+              <TouchableOpacity
+                style={styles.startButton}
+                onPress={handleStartAssessment}
+                activeOpacity={0.8}
+              >
+                <Text style={styles.startButtonText}>Start Assessment</Text>
+              </TouchableOpacity>
+
+              <Text style={styles.disclaimer}>
+                Anonymous • No signup required
+              </Text>
+            </View>
+
+            {/* Version Info */}
+            <View style={styles.bottomInfo}>
+              <Text style={styles.versionText}>Powered by Kevin Mekulu's Research</Text>
+              <Text style={styles.versionText}>version 0.1.0</Text>
+            </View>
           </View>
-        </View>
+        </SafeAreaView>
       </LinearGradient>
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#667eea', // Match gradient start color
   },
   gradient: {
+    flex: 1,
+  },
+  safeArea: {
     flex: 1,
   },
   content: {
@@ -95,7 +101,7 @@ const styles = StyleSheet.create({
   },
   logoSection: {
     alignItems: 'center',
-    paddingTop: height * 0.08,
+    paddingTop: 40,
   },
   logoText: {
     fontSize: 42,
@@ -106,27 +112,28 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
   },
   tagline: {
-    fontSize: 18,
+    fontSize: 16,
     color: '#E8E8E8',
     textAlign: 'center',
-    lineHeight: 24,
+    lineHeight: 22,
     paddingHorizontal: 20,
   },
   mainContent: {
     alignItems: 'center',
-    paddingBottom: height * 0.08,
+    flex: 1,
+    justifyContent: 'center',
   },
   description: {
-    fontSize: 20,
+    fontSize: 18,
     color: '#F0F0F0',
     textAlign: 'center',
     marginBottom: 32,
-    lineHeight: 28,
+    lineHeight: 26,
     paddingHorizontal: 16,
     fontWeight: '500',
   },
   agentsPreview: {
-    alignItems: 'center',
+    alignItems: 'flex-start',
     marginBottom: 40,
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
     paddingVertical: 20,
@@ -134,6 +141,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.2)',
+    width: '100%',
   },
   agentItem: {
     fontSize: 16,
@@ -163,17 +171,17 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   disclaimer: {
-    fontSize: 16,
+    fontSize: 14,
     color: '#D0D0D0',
     textAlign: 'center',
     fontStyle: 'italic',
   },
   bottomInfo: {
     alignItems: 'center',
-    paddingBottom: 20,
+    paddingBottom: 10,
   },
   versionText: {
-    fontSize: 12,
+    fontSize: 11,
     color: 'rgba(255, 255, 255, 0.6)',
     textAlign: 'center',
   },

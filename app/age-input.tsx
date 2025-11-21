@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Dimensions,
+  ScrollView,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -15,28 +16,25 @@ import Slider from '@react-native-community/slider';
 const { width, height } = Dimensions.get('window');
 
 export default function AgeInputScreen() {
-  const [age, setAge] = useState<number>(35); // Default to middle age
+  const [age, setAge] = useState<number>(35);
 
   const handleContinue = () => {
-
-      // Navigate to the instructions screen with age parameter
-      router.push({ pathname: '/instructions', params: { age } });
+    router.push({ pathname: '/instructions', params: { age } });
   };
 
   const handleBack = () => {
-    // Navigate back to welcome screen
     router.back();
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar style="light" backgroundColor="transparent" translucent />
+    <View style={styles.container}>
+      <StatusBar style="light" backgroundColor="#667eea" translucent={false} />
 
       <LinearGradient
         colors={['#667eea', '#764ba2']}
         style={styles.gradient}
       >
-        <View style={styles.content}>
+        <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
           {/* Header with Back Button */}
           <View style={styles.header}>
             <TouchableOpacity onPress={handleBack} style={styles.backButton}>
@@ -44,8 +42,12 @@ export default function AgeInputScreen() {
             </TouchableOpacity>
           </View>
 
-          {/* Main Content */}
-          <View style={styles.mainContent}>
+          {/* Scrollable Content */}
+          <ScrollView
+            style={styles.scrollView}
+            contentContainerStyle={styles.scrollContent}
+            showsVerticalScrollIndicator={false}
+          >
             <Text style={styles.title}>What's your age?</Text>
 
             <Text style={styles.subtitle}>
@@ -68,8 +70,7 @@ export default function AgeInputScreen() {
                 onValueChange={(value) => setAge(Math.round(value))}
                 minimumTrackTintColor="#FFFFFF"
                 maximumTrackTintColor="rgba(255, 255, 255, 0.3)"
-                thumbStyle={styles.thumbStyle}
-                trackStyle={styles.trackStyle}
+                thumbTintColor="#FFFFFF"
               />
 
               {/* Age Range Labels */}
@@ -83,17 +84,17 @@ export default function AgeInputScreen() {
             <View style={styles.categoryHelper}>
               <Text style={styles.categoryText}>
                 {age < 25 ? '🧠 Young Adult' :
-                 age < 40 ? '💼 Adult' :
-                 age < 60 ? '🎯 Middle Age' : '🌟 Senior'}
+                  age < 40 ? '💼 Adult' :
+                    age < 60 ? '🎯 Middle Age' : '🌟 Senior'}
               </Text>
             </View>
 
             <Text style={styles.disclaimer}>
               Required for accurate scoring
             </Text>
-          </View>
+          </ScrollView>
 
-          {/* Continue Button */}
+          {/* Continue Button - Fixed at bottom */}
           <View style={styles.buttonContainer}>
             <TouchableOpacity
               style={styles.continueButton}
@@ -103,26 +104,27 @@ export default function AgeInputScreen() {
               <Text style={styles.continueButtonText}>Continue</Text>
             </TouchableOpacity>
           </View>
-        </View>
+        </SafeAreaView>
       </LinearGradient>
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#667eea',
   },
   gradient: {
     flex: 1,
   },
-  content: {
+  safeArea: {
     flex: 1,
-    paddingHorizontal: 24,
   },
   header: {
-    paddingTop: 20,
-    paddingBottom: 20,
+    paddingTop: 10,
+    paddingBottom: 10,
+    paddingHorizontal: 24,
   },
   backButton: {
     width: 44,
@@ -137,36 +139,39 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontWeight: 'bold',
   },
-  mainContent: {
+  scrollView: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 20,
+  },
+  scrollContent: {
+    paddingHorizontal: 24,
+    paddingTop: 20,
+    paddingBottom: 20,
   },
   title: {
     fontSize: 36,
     fontWeight: 'bold',
     color: '#FFFFFF',
     textAlign: 'center',
-    marginBottom: 24,
+    marginBottom: 16,
   },
   subtitle: {
-    fontSize: 18,
+    fontSize: 16,
     color: '#E8E8E8',
     textAlign: 'center',
-    lineHeight: 26,
-    marginBottom: 48,
+    lineHeight: 24,
+    marginBottom: 32,
     paddingHorizontal: 10,
   },
   ageDisplayContainer: {
     alignItems: 'center',
-    marginBottom: 48,
+    marginBottom: 32,
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    paddingVertical: 24,
+    paddingVertical: 20,
     paddingHorizontal: 48,
     borderRadius: 20,
     borderWidth: 2,
     borderColor: 'rgba(255, 255, 255, 0.3)',
+    alignSelf: 'center',
   },
   ageNumber: {
     fontSize: 72,
@@ -175,29 +180,18 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   ageLabel: {
-    fontSize: 20,
+    fontSize: 18,
     color: '#E8E8E8',
     textAlign: 'center',
-    marginTop: 8,
+    marginTop: 4,
   },
   sliderContainer: {
     width: '100%',
-    paddingHorizontal: 20,
-    marginBottom: 32,
+    marginBottom: 24,
   },
   slider: {
     width: '100%',
     height: 40,
-  },
-  thumbStyle: {
-    backgroundColor: '#FFFFFF',
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-  },
-  trackStyle: {
-    height: 4,
-    borderRadius: 2,
   },
   rangeLabels: {
     flexDirection: 'row',
@@ -206,16 +200,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
   rangeLabel: {
-    fontSize: 16,
+    fontSize: 14,
     color: '#D0D0D0',
     fontWeight: '500',
   },
   categoryHelper: {
-    marginBottom: 24,
+    marginBottom: 16,
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 20,
+    alignSelf: 'center',
   },
   categoryText: {
     fontSize: 18,
@@ -224,13 +219,17 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   disclaimer: {
-    fontSize: 16,
+    fontSize: 14,
     color: '#D0D0D0',
     textAlign: 'center',
     fontStyle: 'italic',
+    marginBottom: 20,
   },
   buttonContainer: {
-    paddingBottom: 40,
+    paddingHorizontal: 24,
+    paddingTop: 16,
+    paddingBottom: 16,
+    backgroundColor: 'transparent',
   },
   continueButton: {
     backgroundColor: '#FFFFFF',
