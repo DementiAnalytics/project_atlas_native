@@ -4,16 +4,15 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  Dimensions,
   Alert,
+  ScrollView,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Audio } from 'expo-av';
-
-const { width, height } = Dimensions.get('window');
+import { scale, verticalScale, moderateScale } from 'react-native-size-matters';
 
 export default function InstructionsScreen() {
   const { age } = useLocalSearchParams<{ age: string }>();
@@ -70,100 +69,102 @@ export default function InstructionsScreen() {
         style={styles.gradient}
       >
         <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
-          <View style={styles.content}>
-            {/* Header with Back Button */}
-            <View style={styles.header}>
-              <TouchableOpacity onPress={handleBack} style={styles.backButton}>
-                <Text style={styles.backButtonText}>←</Text>
-              </TouchableOpacity>
+          {/* Header with Back Button */}
+          <View style={styles.header}>
+            <TouchableOpacity onPress={handleBack} style={styles.backButton}>
+              <Text style={styles.backButtonText}>←</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Main Content - Scrollable */}
+          <ScrollView
+            style={styles.scrollView}
+            contentContainerStyle={styles.scrollContent}
+            showsVerticalScrollIndicator={false}
+          >
+            {/* Timer Display */}
+            <View style={styles.timerContainer}>
+              <Text style={styles.timerText}>60</Text>
+              <Text style={styles.timerLabel}>seconds</Text>
             </View>
 
-            {/* Main Content */}
-            <View style={styles.mainContent}>
-              {/* Timer Display */}
-              <View style={styles.timerContainer}>
-                <Text style={styles.timerText}>60</Text>
-                <Text style={styles.timerLabel}>seconds</Text>
-              </View>
+            <Text style={styles.title}>
+              Name as many animals as you can in 60 seconds
+            </Text>
 
-              <Text style={styles.title}>
-                Name as many animals as you can in 60 seconds
-              </Text>
+            <Text style={styles.instruction}>
+              Speak clearly - our AI agents will handle the rest
+            </Text>
 
-              <Text style={styles.instruction}>
-                Speak clearly - our AI agents will handle the rest
-              </Text>
-
-              {/* AI Agents Working Preview */}
-              <View style={styles.agentsContainer}>
-                <Text style={styles.agentsTitle}>5 AI Agents Ready:</Text>
-                <View style={styles.agentsList}>
-                  {[
-                    '🗣️ Speech Agent - Audio processing',
-                    '⚡ Efficiency Agent - Repetition detection',
-                    '🧩 Flexibility Agent - Category analysis',
-                    '🎯 Strategy Agent - Approach evaluation',
-                    '💡 Insight Agent - Personalized tips'
-                  ].map((agent, index) => (
-                    <Text key={index} style={styles.agentItem}>{agent}</Text>
-                  ))}
-                </View>
-              </View>
-
-              {/* Microphone Status */}
-              <View style={styles.micStatusContainer}>
-                {checkingPermission ? (
-                  <>
-                    <View style={styles.loadingIndicator} />
-                    <Text style={styles.micStatusText}>Checking microphone...</Text>
-                  </>
-                ) : (
-                  <>
-                    <View style={[
-                      styles.micStatusIndicator,
-                      { backgroundColor: microphonePermission ? '#4CAF50' : '#FF5722' }
-                    ]} />
-                    <Text style={styles.micStatusText}>
-                      {microphonePermission ? '🎤 Microphone Ready' : '❌ Microphone Permission Needed'}
-                    </Text>
-                  </>
-                )}
-              </View>
-
-              {/* Age Display */}
-              <View style={styles.ageInfo}>
-                <Text style={styles.ageInfoText}>Age: {age} • Personalized scoring ready</Text>
+            {/* AI Agents Working Preview */}
+            <View style={styles.agentsContainer}>
+              <Text style={styles.agentsTitle}>5 AI Agents Ready:</Text>
+              <View style={styles.agentsList}>
+                {[
+                  '🗣️ Speech Agent - Audio processing',
+                  '⚡ Efficiency Agent - Repetition detection',
+                  '🧩 Flexibility Agent - Category analysis',
+                  '🎯 Strategy Agent - Approach evaluation',
+                  '💡 Insight Agent - Personalized tips'
+                ].map((agent, index) => (
+                  <Text key={index} style={styles.agentItem}>{agent}</Text>
+                ))}
               </View>
             </View>
 
-            {/* Start Button */}
-            <View style={styles.buttonContainer}>
-              <TouchableOpacity
-                style={[
-                  styles.startButton,
-                  (!microphonePermission || checkingPermission) && styles.disabledButton
-                ]}
-                onPress={handleStartRecording}
-                activeOpacity={0.8}
-                disabled={!microphonePermission || checkingPermission}
-              >
-                <Text style={[
-                  styles.startButtonText,
-                  (!microphonePermission || checkingPermission) && styles.disabledButtonText
-                ]}>
-                  {checkingPermission ? 'Checking...' : 'Start Recording'}
-                </Text>
-              </TouchableOpacity>
-
-              {!microphonePermission && !checkingPermission && (
-                <TouchableOpacity
-                  style={styles.permissionButton}
-                  onPress={checkMicrophonePermission}
-                >
-                  <Text style={styles.permissionButtonText}>Grant Microphone Access</Text>
-                </TouchableOpacity>
+            {/* Microphone Status */}
+            <View style={styles.micStatusContainer}>
+              {checkingPermission ? (
+                <>
+                  <View style={styles.loadingIndicator} />
+                  <Text style={styles.micStatusText}>Checking microphone...</Text>
+                </>
+              ) : (
+                <>
+                  <View style={[
+                    styles.micStatusIndicator,
+                    { backgroundColor: microphonePermission ? '#4CAF50' : '#FF5722' }
+                  ]} />
+                  <Text style={styles.micStatusText}>
+                    {microphonePermission ? '🎤 Microphone Ready' : '❌ Microphone Permission Needed'}
+                  </Text>
+                </>
               )}
             </View>
+
+            {/* Age Display */}
+            <View style={styles.ageInfo}>
+              <Text style={styles.ageInfoText}>Age: {age} • Personalized scoring ready</Text>
+            </View>
+          </ScrollView>
+
+          {/* Start Button - Fixed at bottom */}
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity
+              style={[
+                styles.startButton,
+                (!microphonePermission || checkingPermission) && styles.disabledButton
+              ]}
+              onPress={handleStartRecording}
+              activeOpacity={0.8}
+              disabled={!microphonePermission || checkingPermission}
+            >
+              <Text style={[
+                styles.startButtonText,
+                (!microphonePermission || checkingPermission) && styles.disabledButtonText
+              ]}>
+                {checkingPermission ? 'Checking...' : 'Start Recording'}
+              </Text>
+            </TouchableOpacity>
+
+            {!microphonePermission && !checkingPermission && (
+              <TouchableOpacity
+                style={styles.permissionButton}
+                onPress={checkMicrophonePermission}
+              >
+                <Text style={styles.permissionButtonText}>Grant Microphone Access</Text>
+              </TouchableOpacity>
+            )}
           </View>
         </SafeAreaView>
       </LinearGradient>
@@ -182,141 +183,146 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
   },
-  content: {
-    flex: 1,
-    paddingHorizontal: 24,
-  },
   header: {
-    paddingTop: 10,
-    paddingBottom: 20,
+    paddingTop: verticalScale(8),
+    paddingBottom: verticalScale(12),
+    paddingHorizontal: scale(20),
   },
   backButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+    width: scale(40),
+    height: scale(40),
+    borderRadius: scale(20),
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
     justifyContent: 'center',
     alignItems: 'center',
   },
   backButtonText: {
-    fontSize: 24,
+    fontSize: moderateScale(22),
     color: '#FFFFFF',
     fontWeight: 'bold',
   },
-  mainContent: {
+  scrollView: {
     flex: 1,
+  },
+  scrollContent: {
+    paddingHorizontal: scale(20),
+    paddingBottom: verticalScale(20),
+    flexGrow: 1,
     justifyContent: 'center',
-    alignItems: 'center',
   },
   timerContainer: {
     alignItems: 'center',
-    marginBottom: 24,
+    marginBottom: verticalScale(20),
     backgroundColor: 'rgba(255, 255, 255, 0.15)',
-    paddingVertical: 16,
-    paddingHorizontal: 32,
-    borderRadius: 20,
+    paddingVertical: verticalScale(14),
+    paddingHorizontal: scale(28),
+    borderRadius: scale(18),
     borderWidth: 2,
     borderColor: 'rgba(255, 255, 255, 0.3)',
+    alignSelf: 'center',
   },
   timerText: {
-    fontSize: 48,
+    fontSize: moderateScale(42),
     fontWeight: 'bold',
     color: '#FFFFFF',
     textAlign: 'center',
   },
   timerLabel: {
-    fontSize: 14,
+    fontSize: moderateScale(13),
     color: '#E8E8E8',
     textAlign: 'center',
-    marginTop: 4,
+    marginTop: verticalScale(2),
   },
   title: {
-    fontSize: 22,
+    fontSize: moderateScale(19),
     fontWeight: 'bold',
     color: '#FFFFFF',
     textAlign: 'center',
-    lineHeight: 30,
-    marginBottom: 16,
-    paddingHorizontal: 10,
+    lineHeight: moderateScale(26),
+    marginBottom: verticalScale(12),
+    paddingHorizontal: scale(8),
   },
   instruction: {
-    fontSize: 16,
+    fontSize: moderateScale(14),
     color: '#E8E8E8',
     textAlign: 'center',
-    lineHeight: 22,
-    marginBottom: 24,
-    paddingHorizontal: 10,
+    lineHeight: moderateScale(20),
+    marginBottom: verticalScale(20),
+    paddingHorizontal: scale(8),
   },
   agentsContainer: {
-    marginBottom: 24,
+    marginBottom: verticalScale(20),
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    paddingVertical: 14,
-    paddingHorizontal: 18,
-    borderRadius: 15,
+    paddingVertical: verticalScale(12),
+    paddingHorizontal: scale(16),
+    borderRadius: scale(14),
     width: '100%',
   },
   agentsTitle: {
-    fontSize: 14,
+    fontSize: moderateScale(13),
     color: '#FFFFFF',
     fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 10,
+    marginBottom: verticalScale(8),
   },
   agentsList: {
-    gap: 4,
+    gap: verticalScale(3),
   },
   agentItem: {
-    fontSize: 12,
+    fontSize: moderateScale(11),
     color: '#E8E8E8',
-    lineHeight: 18,
+    lineHeight: moderateScale(16),
   },
   micStatusContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    borderRadius: 25,
-    marginBottom: 16,
+    paddingVertical: verticalScale(8),
+    paddingHorizontal: scale(14),
+    borderRadius: scale(22),
+    marginBottom: verticalScale(14),
+    alignSelf: 'center',
   },
   micStatusIndicator: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    marginRight: 10,
+    width: scale(9),
+    height: scale(9),
+    borderRadius: scale(5),
+    marginRight: scale(8),
   },
   loadingIndicator: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
+    width: scale(9),
+    height: scale(9),
+    borderRadius: scale(5),
     backgroundColor: '#FFC107',
-    marginRight: 10,
+    marginRight: scale(8),
   },
   micStatusText: {
-    fontSize: 14,
+    fontSize: moderateScale(13),
     color: '#FFFFFF',
     fontWeight: '500',
   },
   ageInfo: {
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 15,
+    paddingVertical: verticalScale(7),
+    paddingHorizontal: scale(14),
+    borderRadius: scale(14),
+    alignSelf: 'center',
   },
   ageInfoText: {
-    fontSize: 12,
+    fontSize: moderateScale(11),
     color: '#D0D0D0',
     textAlign: 'center',
   },
   buttonContainer: {
-    paddingBottom: 20,
-    gap: 12,
+    paddingBottom: verticalScale(16),
+    paddingHorizontal: scale(20),
+    gap: verticalScale(10),
   },
   startButton: {
     backgroundColor: '#FFFFFF',
-    paddingVertical: 18,
-    paddingHorizontal: 64,
-    borderRadius: 30,
+    paddingVertical: verticalScale(16),
+    paddingHorizontal: scale(48),
+    borderRadius: scale(28),
     elevation: 8,
     shadowColor: '#000',
     shadowOffset: {
@@ -330,7 +336,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.5)',
   },
   startButtonText: {
-    fontSize: 20,
+    fontSize: moderateScale(18),
     fontWeight: 'bold',
     color: '#667eea',
     textAlign: 'center',
@@ -340,14 +346,14 @@ const styles = StyleSheet.create({
   },
   permissionButton: {
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    paddingVertical: 12,
-    paddingHorizontal: 32,
-    borderRadius: 25,
+    paddingVertical: verticalScale(10),
+    paddingHorizontal: scale(28),
+    borderRadius: scale(22),
     borderWidth: 2,
     borderColor: '#FF5722',
   },
   permissionButtonText: {
-    fontSize: 16,
+    fontSize: moderateScale(14),
     color: '#FF5722',
     fontWeight: '600',
     textAlign: 'center',
