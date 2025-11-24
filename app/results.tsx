@@ -4,7 +4,6 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
 import {
     Alert,
-    Dimensions,
     ScrollView,
     StyleSheet,
     Text,
@@ -13,8 +12,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AnalyzeResponse, apiService, TranscriptionResponse } from './services/api';
-
-const { width, height } = Dimensions.get('window');
+import { scale, verticalScale, moderateScale } from 'react-native-size-matters';
 
 interface ResultsData {
   transcription: TranscriptionResponse;
@@ -75,7 +73,7 @@ export default function ResultsScreen() {
   };
 
   const getScoreLevel = (score: number): string => {
-    if (score >= 90) return '�� Brain Master';
+    if (score >= 90) return '🧠 Brain Master';
     if (score >= 80) return '💪 Brain Athlete';
     if (score >= 70) return '🎯 Sharp Mind';
     if (score >= 60) return '📚 Learning';
@@ -134,7 +132,7 @@ export default function ResultsScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="light" backgroundColor="#000000" translucent />
-      
+
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         {/* Header */}
         <View style={styles.header}>
@@ -207,7 +205,7 @@ export default function ResultsScreen() {
           <TouchableOpacity style={styles.shareButton} onPress={handleShare}>
             <Text style={styles.shareButtonText}>📤 Share Results</Text>
           </TouchableOpacity>
-          
+
           <TouchableOpacity style={styles.newButton} onPress={handleNewAssessment}>
             <Text style={styles.newButtonText}>🔄 New Assessment</Text>
           </TouchableOpacity>
@@ -229,17 +227,17 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 24,
+    paddingHorizontal: scale(20),
   },
   loadingText: {
-    fontSize: 24,
+    fontSize: moderateScale(22),
     color: '#FFFFFF',
     fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 12,
+    marginBottom: verticalScale(10),
   },
   loadingSubtext: {
-    fontSize: 16,
+    fontSize: moderateScale(14),
     color: '#CCCCCC',
     textAlign: 'center',
   },
@@ -247,78 +245,78 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 24,
+    paddingHorizontal: scale(20),
   },
   errorText: {
-    fontSize: 18,
+    fontSize: moderateScale(16),
     color: '#FF6B6B',
     textAlign: 'center',
-    marginBottom: 24,
+    marginBottom: verticalScale(20),
   },
   retryButton: {
     backgroundColor: '#667eea',
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 8,
+    paddingVertical: verticalScale(10),
+    paddingHorizontal: scale(20),
+    borderRadius: scale(8),
   },
   retryButtonText: {
     color: '#FFFFFF',
-    fontSize: 16,
+    fontSize: moderateScale(14),
     fontWeight: '600',
   },
   header: {
     alignItems: 'center',
-    paddingTop: 20,
-    paddingBottom: 30,
+    paddingTop: verticalScale(16),
+    paddingBottom: verticalScale(24),
   },
   title: {
-    fontSize: 28,
+    fontSize: moderateScale(24),
     color: '#FFFFFF',
     fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 8,
+    marginBottom: verticalScale(6),
   },
   subtitle: {
-    fontSize: 16,
+    fontSize: moderateScale(14),
     color: '#CCCCCC',
     textAlign: 'center',
   },
   scoreCard: {
-    marginHorizontal: 24,
-    marginBottom: 30,
-    borderRadius: 16,
+    marginHorizontal: scale(20),
+    marginBottom: verticalScale(24),
+    borderRadius: scale(14),
     overflow: 'hidden',
   },
   scoreGradient: {
-    paddingVertical: 30,
-    paddingHorizontal: 20,
+    paddingVertical: verticalScale(24),
+    paddingHorizontal: scale(16),
     alignItems: 'center',
   },
   scoreLabel: {
-    fontSize: 16,
+    fontSize: moderateScale(14),
     color: '#FFFFFF',
     opacity: 0.9,
-    marginBottom: 8,
+    marginBottom: verticalScale(6),
   },
   scoreValue: {
-    fontSize: 72,
+    fontSize: moderateScale(60),
     fontWeight: 'bold',
-    marginBottom: 4,
+    marginBottom: verticalScale(3),
   },
   scoreMax: {
-    fontSize: 24,
+    fontSize: moderateScale(20),
     color: '#FFFFFF',
     opacity: 0.7,
-    marginBottom: 12,
+    marginBottom: verticalScale(10),
   },
   scoreLevel: {
-    fontSize: 20,
+    fontSize: moderateScale(17),
     color: '#FFFFFF',
     fontWeight: '600',
   },
   metricsContainer: {
-    marginHorizontal: 24,
-    marginBottom: 30,
+    marginHorizontal: scale(20),
+    marginBottom: verticalScale(24),
   },
   metricRow: {
     flexDirection: 'row',
@@ -328,97 +326,97 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    paddingVertical: 20,
-    marginHorizontal: 4,
-    borderRadius: 12,
+    paddingVertical: verticalScale(16),
+    marginHorizontal: scale(3),
+    borderRadius: scale(10),
   },
   metricValue: {
-    fontSize: 32,
+    fontSize: moderateScale(28),
     color: '#FFFFFF',
     fontWeight: 'bold',
-    marginBottom: 4,
+    marginBottom: verticalScale(3),
   },
   metricLabel: {
-    fontSize: 12,
+    fontSize: moderateScale(11),
     color: '#CCCCCC',
     textAlign: 'center',
   },
   section: {
-    marginHorizontal: 24,
-    marginBottom: 24,
+    marginHorizontal: scale(20),
+    marginBottom: verticalScale(20),
   },
   sectionTitle: {
-    fontSize: 20,
+    fontSize: moderateScale(17),
     color: '#FFFFFF',
     fontWeight: '600',
-    marginBottom: 12,
+    marginBottom: verticalScale(10),
   },
   transcriptionBox: {
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    padding: 16,
-    borderRadius: 12,
+    padding: scale(14),
+    borderRadius: scale(10),
   },
   transcriptionText: {
-    fontSize: 16,
+    fontSize: moderateScale(14),
     color: '#FFFFFF',
-    lineHeight: 24,
-    marginBottom: 8,
+    lineHeight: moderateScale(21),
+    marginBottom: verticalScale(6),
   },
   confidenceText: {
-    fontSize: 12,
+    fontSize: moderateScale(11),
     color: '#CCCCCC',
     fontStyle: 'italic',
   },
   reportBox: {
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    padding: 16,
-    borderRadius: 12,
+    padding: scale(14),
+    borderRadius: scale(10),
   },
   reportText: {
-    fontSize: 14,
+    fontSize: moderateScale(12),
     color: '#FFFFFF',
-    lineHeight: 20,
+    lineHeight: moderateScale(18),
     fontFamily: 'monospace',
   },
   sessionInfo: {
-    marginHorizontal: 24,
-    marginBottom: 24,
-    paddingVertical: 12,
+    marginHorizontal: scale(20),
+    marginBottom: verticalScale(20),
+    paddingVertical: verticalScale(10),
     borderTopWidth: 1,
     borderTopColor: 'rgba(255, 255, 255, 0.2)',
   },
   sessionText: {
-    fontSize: 12,
+    fontSize: moderateScale(11),
     color: '#999999',
-    marginBottom: 4,
+    marginBottom: verticalScale(3),
   },
   actionButtons: {
-    marginHorizontal: 24,
-    marginBottom: 40,
-    gap: 12,
+    marginHorizontal: scale(20),
+    marginBottom: verticalScale(32),
+    gap: verticalScale(10),
   },
   shareButton: {
     backgroundColor: '#4CAF50',
-    paddingVertical: 16,
-    borderRadius: 12,
+    paddingVertical: verticalScale(14),
+    borderRadius: scale(10),
     alignItems: 'center',
   },
   shareButtonText: {
     color: '#FFFFFF',
-    fontSize: 18,
+    fontSize: moderateScale(16),
     fontWeight: '600',
   },
   newButton: {
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    paddingVertical: 16,
-    borderRadius: 12,
+    paddingVertical: verticalScale(14),
+    borderRadius: scale(10),
     alignItems: 'center',
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.3)',
   },
   newButtonText: {
     color: '#FFFFFF',
-    fontSize: 18,
+    fontSize: moderateScale(16),
     fontWeight: '600',
   },
 });

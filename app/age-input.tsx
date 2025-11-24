@@ -1,19 +1,17 @@
+import Slider from '@react-native-community/slider';
+import { LinearGradient } from 'expo-linear-gradient';
+import { router } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
 import {
-  View,
+  ScrollView,
+  StyleSheet,
   Text,
   TouchableOpacity,
-  StyleSheet,
-  Dimensions,
-  ScrollView,
+  View,
 } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { StatusBar } from 'expo-status-bar';
-import { router } from 'expo-router';
-import Slider from '@react-native-community/slider';
-
-const { width, height } = Dimensions.get('window');
+import { scale, verticalScale, moderateScale } from 'react-native-size-matters';
 
 export default function AgeInputScreen() {
   const [age, setAge] = useState<number>(35);
@@ -122,20 +120,20 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    paddingTop: 10,
-    paddingBottom: 10,
-    paddingHorizontal: 24,
+    paddingTop: verticalScale(8),
+    paddingBottom: verticalScale(8),
+    paddingHorizontal: scale(20),
   },
   backButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+    width: scale(40),
+    height: scale(40),
+    borderRadius: scale(20),
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
     justifyContent: 'center',
     alignItems: 'center',
   },
   backButtonText: {
-    fontSize: 24,
+    fontSize: moderateScale(22),
     color: '#FFFFFF',
     fontWeight: 'bold',
   },
@@ -143,99 +141,101 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingHorizontal: 24,
-    paddingTop: 20,
-    paddingBottom: 20,
+    paddingHorizontal: scale(20),
+    paddingTop: verticalScale(10),
+    paddingBottom: verticalScale(10),
+    flexGrow: 1,
+    justifyContent: 'center',
   },
   title: {
-    fontSize: 36,
+    fontSize: moderateScale(28),
     fontWeight: 'bold',
     color: '#FFFFFF',
     textAlign: 'center',
-    marginBottom: 16,
+    marginBottom: verticalScale(12),
   },
   subtitle: {
-    fontSize: 16,
+    fontSize: moderateScale(14),
     color: '#E8E8E8',
     textAlign: 'center',
-    lineHeight: 24,
-    marginBottom: 32,
-    paddingHorizontal: 10,
+    lineHeight: moderateScale(20),
+    marginBottom: verticalScale(24),
+    paddingHorizontal: scale(8),
   },
   ageDisplayContainer: {
     alignItems: 'center',
-    marginBottom: 32,
+    marginBottom: verticalScale(24),
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    paddingVertical: 20,
-    paddingHorizontal: 48,
-    borderRadius: 20,
+    paddingVertical: verticalScale(16),
+    paddingHorizontal: scale(32),
+    borderRadius: scale(16),
     borderWidth: 2,
     borderColor: 'rgba(255, 255, 255, 0.3)',
     alignSelf: 'center',
   },
   ageNumber: {
-    fontSize: 72,
+    fontSize: moderateScale(56),
     fontWeight: 'bold',
     color: '#FFFFFF',
     textAlign: 'center',
   },
   ageLabel: {
-    fontSize: 18,
+    fontSize: moderateScale(15),
     color: '#E8E8E8',
     textAlign: 'center',
-    marginTop: 4,
+    marginTop: verticalScale(2),
   },
   sliderContainer: {
     width: '100%',
-    marginBottom: 24,
+    marginBottom: verticalScale(18),
   },
   slider: {
     width: '100%',
-    height: 40,
+    height: scale(40),
   },
   rangeLabels: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 8,
-    paddingHorizontal: 12,
+    marginTop: verticalScale(6),
+    paddingHorizontal: scale(10),
   },
   rangeLabel: {
-    fontSize: 14,
+    fontSize: moderateScale(12),
     color: '#D0D0D0',
     fontWeight: '500',
   },
   categoryHelper: {
-    marginBottom: 16,
+    marginBottom: verticalScale(14),
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 20,
+    paddingVertical: verticalScale(10),
+    paddingHorizontal: scale(20),
+    borderRadius: scale(16),
     alignSelf: 'center',
   },
   categoryText: {
-    fontSize: 18,
+    fontSize: moderateScale(16),
     color: '#FFFFFF',
     fontWeight: '600',
     textAlign: 'center',
   },
   disclaimer: {
-    fontSize: 14,
+    fontSize: moderateScale(12),
     color: '#D0D0D0',
     textAlign: 'center',
     fontStyle: 'italic',
-    marginBottom: 20,
+    marginBottom: verticalScale(12),
   },
   buttonContainer: {
-    paddingHorizontal: 24,
-    paddingTop: 16,
-    paddingBottom: 16,
+    paddingHorizontal: scale(20),
+    paddingTop: verticalScale(12),
+    paddingBottom: verticalScale(12),
     backgroundColor: 'transparent',
   },
   continueButton: {
     backgroundColor: '#FFFFFF',
-    paddingVertical: 18,
-    paddingHorizontal: 64,
-    borderRadius: 30,
+    paddingVertical: verticalScale(14),
+    paddingHorizontal: scale(40),
+    borderRadius: scale(28),
     elevation: 8,
     shadowColor: '#000',
     shadowOffset: {
@@ -246,7 +246,7 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
   },
   continueButtonText: {
-    fontSize: 20,
+    fontSize: moderateScale(17),
     fontWeight: 'bold',
     color: '#667eea',
     textAlign: 'center',
