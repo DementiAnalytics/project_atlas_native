@@ -257,3 +257,11 @@ This beta version is for demonstration purposes only. Not for clinical use. The 
 Made with ❤️ by Kevin Mekulu<br>
 🧠 Advancing Brain Health Through AI
 </p>
+
+## update from Sky
+App.py now uses Cartesian for the STT (Speech-To-Text)
+It is highly accurate, moderately fast, and free up to 333min/month - pricing might vary.
+Make sure you run backend before running npx expo start.
+```bash
+uvicorn app:app
+```

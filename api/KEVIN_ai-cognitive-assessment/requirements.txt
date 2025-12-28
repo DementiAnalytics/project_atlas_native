@@ -1,6 +1,7 @@
 annotated-types==0.7.0
 anyio==4.10.0
 av==16.0.1
+cartesia
 certifi==2025.8.3
 charset-normalizer==3.4.3
 click==8.2.1
@@ -53,6 +54,7 @@ pydantic_core==2.33.2
 Pygments==2.19.2
 pytest==8.4.1
 pytest-cov==6.2.1
+python-dotenv
 PyYAML==6.0.3
 regex==2025.8.29
 requests==2.32.5

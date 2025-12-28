@@ -3,10 +3,14 @@ from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from brain_health import SimpleBrainHealth
-from faster_whisper import WhisperModel
+from cartesia import Cartesia
+from dotenv import load_dotenv
 import tempfile
 import os
 import logging
+
+# Load environment variables from .env file
+load_dotenv()
 
 app = FastAPI(title="Brain Health Demo API", version="0.1.0")
 app.add_middleware(
@@ -23,14 +27,13 @@ _analyzer = SimpleBrainHealth()
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Initialize faster-whisper model at startup
-logger.info("=================LOADING WHISPER MODEL=================")
+# Initialize Cartesia STT client at startup
+logger.info("=================INITIALIZING CARTESIA STT=================")
 
-# Use CPU for faster-whisper (or "cuda" if you have GPU)
-model_size = "base"
-_model = WhisperModel(model_size, device="cpu", compute_type="int8")
+# Initialize Cartesia client with API key from environment variable
+_cartesia_client = Cartesia(api_key=os.getenv("CARTESIA_API_KEY"))
 
-logger.info(f"[DEBUG] Faster-Whisper {model_size} model loaded successfully!\n")
+logger.info("[DEBUG] Cartesia STT client initialized successfully!\n")
 
 class AnalyzeIn(BaseModel):
     text: str
@@ -50,37 +53,48 @@ async def transcribe_audio(file: UploadFile = File(...)):
     temp_file_path = None
     try:
         logger.info(f"[DEBUG] Starting transcription for file: {file.filename}")
-        
+
         # Save uploaded file temporarily
         temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".wav")
         temp_file_path = temp_file.name
-        
+
         content = await file.read()
         temp_file.write(content)
         temp_file.close()
-        
+
         logger.info(f"[DEBUG] Temporary file saved: {temp_file_path}")
-        
-        # Transcribe with faster-whisper
-        logger.info("[DEBUG] Running Whisper transcription")
-        segments, info = _model.transcribe(temp_file_path, beam_size=5)
-        
-        # Extract text from segments
-        transcribed_text = " ".join([segment.text for segment in segments]).strip()
-        
+
+        # Transcribe with Cartesia STT (ink-whisper model)
+        logger.info("[DEBUG] Running Cartesia STT transcription with ink-whisper model")
+
+        # Read the audio file as bytes
+        with open(temp_file_path, 'rb') as audio_file:
+            audio_bytes = audio_file.read()
+
+        # Use Cartesia's transcribe method with ink-whisper model
+        response = _cartesia_client.stt.transcribe(
+            file=audio_bytes,
+            model="ink-whisper",
+            language="en"
+        )
+
+        logger.info(f"[DEBUG] response: {response}")
+        # Extract transcribed text from response object
+        transcribed_text = response.text if hasattr(response, 'text') else str(response)
+
         logger.info(f"[DEBUG] Transcription completed: '{transcribed_text[:50]}...'")
-        
+
         return TranscriptionOut(text=transcribed_text)
-        
+
     except Exception as e:
         logger.error(f"[ERROR] Transcription error: {str(e)}")
-        
+
         # Fallback
         logger.warning("[WARNING] Using fallback transcription...")
         return TranscriptionOut(
-            text="cat dog bird fish elephant lion tiger bear wolf deer rabbit squirrel mouse rat hamster guinea pig"
+            text="lion tiger bear wolf deer rabbit squirrel mouse rat hamster guinea pig"
         )
-    
+
     finally:
         if temp_file_path and os.path.exists(temp_file_path):
             try:
