@@ -13,10 +13,11 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
 
+
 // 🔧 TESTING CONFIGURATION - Change this ONE line to adjust timer!
 // For development: Set to 10 or 15 for quick testing
 // For production: Set to 60 for full assessment
-const RECORDING_DURATION = 60; // seconds
+const RECORDING_DURATION = 5; // seconds
 
 export default function RecordingScreen() {
   const { age } = useLocalSearchParams<{ age: string }>();
