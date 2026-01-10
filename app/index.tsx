@@ -4,20 +4,16 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  Dimensions,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { router } from 'expo-router';
-
-
-const { width, height } = Dimensions.get('window');
+import { scale, verticalScale, moderateScale } from 'react-native-size-matters';
 
 export default function WelcomeScreen() {
   const handleStartAssessment = () => {
     console.log('🧠 Starting Project Atlas assessment...');
-    // Navigate to age input screen
     router.push('/age-input');
   };
 
@@ -86,7 +82,7 @@ export default function WelcomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#667eea', // Match gradient start color
+    backgroundColor: '#667eea',
   },
   gradient: {
     flex: 1,
@@ -96,27 +92,27 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    paddingHorizontal: 24,
+    paddingHorizontal: scale(20),
     justifyContent: 'space-between',
   },
   logoSection: {
     alignItems: 'center',
-    paddingTop: 40,
+    paddingTop: verticalScale(30),
   },
   logoText: {
-    fontSize: 42,
+    fontSize: moderateScale(34),
     fontWeight: 'bold',
     color: '#FFFFFF',
     textAlign: 'center',
-    marginBottom: 16,
+    marginBottom: verticalScale(12),
     letterSpacing: 1,
   },
   tagline: {
-    fontSize: 16,
+    fontSize: moderateScale(14),
     color: '#E8E8E8',
     textAlign: 'center',
-    lineHeight: 22,
-    paddingHorizontal: 20,
+    lineHeight: moderateScale(20),
+    paddingHorizontal: scale(16),
   },
   mainContent: {
     alignItems: 'center',
@@ -124,36 +120,36 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   description: {
-    fontSize: 18,
+    fontSize: moderateScale(16),
     color: '#F0F0F0',
     textAlign: 'center',
-    marginBottom: 32,
-    lineHeight: 26,
-    paddingHorizontal: 16,
+    marginBottom: verticalScale(28),
+    lineHeight: moderateScale(24),
+    paddingHorizontal: scale(12),
     fontWeight: '500',
   },
   agentsPreview: {
     alignItems: 'flex-start',
-    marginBottom: 40,
+    marginBottom: verticalScale(32),
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    paddingVertical: 20,
-    paddingHorizontal: 24,
-    borderRadius: 16,
+    paddingVertical: verticalScale(16),
+    paddingHorizontal: scale(20),
+    borderRadius: scale(14),
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.2)',
     width: '100%',
   },
   agentItem: {
-    fontSize: 16,
+    fontSize: moderateScale(14),
     color: '#FFFFFF',
-    marginVertical: 4,
+    marginVertical: verticalScale(3),
     fontWeight: '500',
   },
   startButton: {
     backgroundColor: '#FFFFFF',
-    paddingVertical: 18,
-    paddingHorizontal: 64,
-    borderRadius: 30,
+    paddingVertical: verticalScale(16),
+    paddingHorizontal: scale(48),
+    borderRadius: scale(28),
     elevation: 8,
     shadowColor: '#000',
     shadowOffset: {
@@ -162,26 +158,26 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.3,
     shadowRadius: 8,
-    marginBottom: 24,
+    marginBottom: verticalScale(20),
   },
   startButtonText: {
-    fontSize: 20,
+    fontSize: moderateScale(18),
     fontWeight: 'bold',
     color: '#667eea',
     textAlign: 'center',
   },
   disclaimer: {
-    fontSize: 14,
+    fontSize: moderateScale(13),
     color: '#D0D0D0',
     textAlign: 'center',
     fontStyle: 'italic',
   },
   bottomInfo: {
     alignItems: 'center',
-    paddingBottom: 10,
+    paddingBottom: verticalScale(8),
   },
   versionText: {
-    fontSize: 11,
+    fontSize: moderateScale(10),
     color: 'rgba(255, 255, 255, 0.6)',
     textAlign: 'center',
   },
