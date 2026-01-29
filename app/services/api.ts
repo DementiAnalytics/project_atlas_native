@@ -1,6 +1,7 @@
 // app/services/api.ts
 import { API_CONFIG } from "../config/api";
 import { generateMockData } from "./mockData";
+import { cartesiaService } from "./cartesia";
 
 const API_BASE_URL = API_CONFIG.baseUrl;
 
@@ -51,32 +52,17 @@ class ApiService {
     }
 
     try {
-      log('[API] Starting audio transcription...');
+      log('[API] Starting audio transcription with Cartesia...');
 
-      const formData = new FormData();
-      formData.append('file', {
-        uri: audioUri,
-        type: 'audio/wav',
-        name: 'recording.wav',
-      } as any);
+      // Use Cartesia service for transcription (frontend-based STT)
+      const result = await cartesiaService.transcribeAudio(audioUri);
+      log('[API] Transcription completed:', result.text);
 
-      const response = await fetch(`${this.baseUrl}/transcribe`, {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (!response.ok) {
-        throw new Error(`Transcription failed: ${response.statusText}`);
-      }
-
-      const result = await response.json();
-      log('[API] Transcription completed');
-
-      return { text: result.text, confidence: 1.0 };
+      return result;
     } catch (error) {
       // In demo mode, silently fall back to mock data
       if (API_CONFIG.suppressErrors) {
-        log('[DEMO] Network error, using mock data');
+        log('[DEMO] Transcription error, using mock data');
         const mockData = generateMockData(audioUri);
         return mockData.transcription;
       } else {
