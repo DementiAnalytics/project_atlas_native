@@ -222,7 +222,6 @@ export default function RecordingScreen() {
         const uri = recordingRef.current.getURI();
         return uri;
       }
-2 
       // Stop the recording
       await recordingRef.current.stopAndUnloadAsync();
       const uri = recordingRef.current.getURI();

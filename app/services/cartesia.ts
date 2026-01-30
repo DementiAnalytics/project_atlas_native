@@ -1,18 +1,15 @@
 // app/services/cartesia.ts
 // Direct REST API implementation (Cartesia SDK doesn't work in React Native)
 
-import Constants from 'expo-constants';
-
-// Get API key from Expo Constants (loaded via app.config.js from .env)
-const CARTESIA_API_KEY = Constants.expoConfig?.extra?.CARTESIA_API_KEY || '';
-const CARTESIA_VERSION = Constants.expoConfig?.extra?.CARTESIA_VERSION;
+const CARTESIA_API_KEY = process.env.EXPO_PUBLIC_CARTESIA_API_KEY;
+const CARTESIA_VERSION = process.env.EXPO_PUBLIC_CARTESIA_API_VERSION;
 const CARTESIA_API_URL = 'https://api.cartesia.ai/stt';
 
 class CartesiaService {
   private apiKey: string;
 
   constructor() {
-    this.apiKey = CARTESIA_API_KEY;
+    this.apiKey = CARTESIA_API_KEY || '';
     console.log('[Cartesia] API Key loaded:', this.apiKey ? 'Yes' : 'No');
     if (!this.apiKey) {
       console.warn('[Cartesia] Warning: API key not found. Check app.config.js and .env');
@@ -52,7 +49,7 @@ class CartesiaService {
         method: 'POST',
         headers: {
           'X-API-Key': this.apiKey,
-          'Cartesia-Version': CARTESIA_VERSION,
+          'Cartesia-Version': CARTESIA_VERSION || '',
         },
         body: formData,
       });
