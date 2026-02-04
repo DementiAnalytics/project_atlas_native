@@ -1,7 +1,7 @@
 import { Audio } from 'expo-av';
 import { router, useLocalSearchParams } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   Alert,
   Animated,
@@ -11,12 +11,13 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { scale, verticalScale, moderateScale } from 'react-native-size-matters';
+import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
+
 
 // 🔧 TESTING CONFIGURATION - Change this ONE line to adjust timer!
 // For development: Set to 10 or 15 for quick testing
 // For production: Set to 60 for full assessment
-const RECORDING_DURATION = 60; // seconds
+const RECORDING_DURATION = 5; // seconds
 
 export default function RecordingScreen() {
   const { age } = useLocalSearchParams<{ age: string }>();
@@ -144,7 +145,7 @@ export default function RecordingScreen() {
           linearPCMIsFloat: false,
         },
         web: {
-          mimeType: 'audio/wav',
+          mimeType: 'audio/webm',
           bitsPerSecond: 128000,
         },
       });
@@ -221,7 +222,6 @@ export default function RecordingScreen() {
         const uri = recordingRef.current.getURI();
         return uri;
       }
-
       // Stop the recording
       await recordingRef.current.stopAndUnloadAsync();
       const uri = recordingRef.current.getURI();
