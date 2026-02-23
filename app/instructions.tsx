@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
+import { RECORDING_DURATION } from './config/constants';
 
 export default function InstructionsScreen() {
   const { age } = useLocalSearchParams<{ age: string }>();
@@ -84,12 +85,12 @@ export default function InstructionsScreen() {
           >
             {/* Timer Display */}
             <View style={styles.timerContainer}>
-              <Text style={styles.timerText}>60</Text>
+              <Text style={styles.timerText}>{RECORDING_DURATION}</Text>
               <Text style={styles.timerLabel}>seconds</Text>
             </View>
 
             <Text style={styles.title}>
-              Name as many animals as you can in 60 seconds
+              Name as many animals as you can in {RECORDING_DURATION} seconds
             </Text>
 
             <Text style={styles.instruction}>

@@ -8,14 +8,23 @@
       "developmentClient": true,
       "distribution": "internal",
       "env": {
-        "EXPO_PUBLIC_AZURE_BACKEND": "20.172.129.92"
+        "EXPO_PUBLIC_AZURE_BACKEND": "http://20.172.129.92:8000",
+        "EXPO_PUBLIC_RECORDING_DURATION": "10"
       }
     },
     "preview": {
-      "distribution": "internal"
+      "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_AZURE_BACKEND": "http://20.172.129.92:8000",
+        "EXPO_PUBLIC_RECORDING_DURATION": "60"
+      }
     },
     "production": {
-      "autoIncrement": true
+      "autoIncrement": true,
+      "env": {
+        "EXPO_PUBLIC_AZURE_BACKEND": "http://20.172.129.92:8000",
+        "EXPO_PUBLIC_RECORDING_DURATION": "60"
+      }
     }
   },
   "submit": {
