@@ -31,6 +31,8 @@ yarn-error.*
 # local env + config files
 .env*.local
 .env
+CLAUDE.md
+.claude/
 
 # typescript
 *.tsbuildinfo
@@ -42,3 +44,6 @@ venvScoring
 __pycache__/
 
 app-example
+
+# Project-specific files / Documentation
+docs/

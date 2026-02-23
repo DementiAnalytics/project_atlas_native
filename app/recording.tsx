@@ -12,12 +12,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
-
-
-// 🔧 TESTING CONFIGURATION - Change this ONE line to adjust timer!
-// For development: Set to 10 or 15 for quick testing
-// For production: Set to 60 for full assessment
-const RECORDING_DURATION = 5; // seconds
+import { RECORDING_DURATION } from './config/constants';
 
 export default function RecordingScreen() {
   const { age } = useLocalSearchParams<{ age: string }>();
@@ -127,9 +122,9 @@ export default function RecordingScreen() {
 
       const { recording: newRecording } = await Audio.Recording.createAsync({
         android: {
-          extension: '.wav',
-          outputFormat: 2, // MPEG_4
-          audioEncoder: 3, // AAC
+          extension: '.m4a', // MPEG-4/AAC — matches actual output format
+          outputFormat: 2,   // MPEG_4
+          audioEncoder: 3,   // AAC
           sampleRate: 44100,
           numberOfChannels: 1,
           bitRate: 128000,

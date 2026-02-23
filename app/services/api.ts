@@ -1,24 +1,32 @@
 // app/services/api.ts
-import { API_CONFIG } from "../config/api";
-import { generateMockData } from "./mockData";
+import { Platform } from 'react-native';
+import { API_CONFIG } from '../config/api';
 
-const API_BASE_URL = API_CONFIG.baseUrl;
-
-// Silent logging for demo mode
 const log = (...args: any[]) => {
-  if (API_CONFIG.logRequests) {
-    console.log(...args);
-  }
+  if (API_CONFIG.logRequests) console.log(...args);
 };
 
 const logError = (...args: any[]) => {
-  if (API_CONFIG.logErrors) {
-    console.error(...args);
-  }
+  if (API_CONFIG.logErrors) console.error(...args);
 };
 
-export interface AnalyzeRequest {
-  text: string;
+async function fetchWithTimeout(
+  url: string,
+  options: RequestInit,
+  timeoutMs: number
+): Promise<Response> {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    return await fetch(url, { ...options, signal: controller.signal });
+  } catch (err: any) {
+    if (err.name === 'AbortError') {
+      throw new Error(`Request timed out after ${timeoutMs / 1000}s`);
+    }
+    throw err;
+  } finally {
+    clearTimeout(id);
+  }
 }
 
 export interface AnalyzeResponse {
@@ -31,142 +39,88 @@ export interface AnalyzeResponse {
 
 export interface TranscriptionResponse {
   text: string;
-  confidence: 1.0;
+  confidence: number;
 }
 
 class ApiService {
   private baseUrl: string;
 
-  constructor(baseUrl: string = API_BASE_URL) {
+  constructor(baseUrl: string = API_CONFIG.baseUrl) {
     this.baseUrl = baseUrl;
   }
 
   async transcribeAudio(audioUri: string): Promise<TranscriptionResponse> {
-    // If using mock data, return immediately
-    if (API_CONFIG.useMockData) {
-      log('[MOCK] Using mock transcription data');
-      await this.simulateDelay(1000);
-      const mockData = generateMockData(audioUri);
-      return mockData.transcription; 
+    log('[API] Starting audio transcription...');
+
+    const formData = new FormData();
+    const isAndroid = Platform.OS === 'android';
+    formData.append('file', {
+      uri: audioUri,
+      type: isAndroid ? 'audio/m4a' : 'audio/wav',
+      name: isAndroid ? 'recording.m4a' : 'recording.wav',
+    } as any);
+
+    // 2-minute timeout — Whisper on a 2-vCPU VM transcribing 60 s of audio can be slow.
+    const response = await fetchWithTimeout(
+      `${this.baseUrl}/transcribe`,
+      { method: 'POST', body: formData },
+      120_000
+    );
+
+    if (!response.ok) {
+      throw new Error(`Transcription failed: ${response.status} ${response.statusText}`);
     }
 
-    try {
-      log('[API] Starting audio transcription...');
-
-      const formData = new FormData();
-      formData.append('file',{
-        uri: audioUri,
-        type: 'audio/wav',
-        name: 'recording.wav',
-      }as any);
-
-      // Call backend
-      const result = await fetch(`${process.env.EXPO_PUBLIC_AZURE_BACKEND}/transcribe`, {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (!result.ok) {
-        throw new Error(`Transcription failed: ${result.statusText}`);
-      }
-
-      const data: TranscriptionResponse = await result.json();
-
-      log('[API] Transcription completed:', result.text);
-
-      return data;
-    } catch (error) {
-      // DEMO
-      if (API_CONFIG.suppressErrors) {
-        log('[DEMO] Transcription error, using mock data');
-        const mockData = generateMockData(audioUri);
-        return mockData.transcription;
-      } else {
-        logError('[ERROR] Transcription error:', error);
-        throw error;
-      }
-    }
+    const data: TranscriptionResponse = await response.json();
+    log('[API] Transcription completed:', data.text);
+    return data;
   }
 
   async analyzeText(text: string): Promise<AnalyzeResponse> {
-    // If using mock data, return immediately
-    if (API_CONFIG.useMockData) {
-      log('[MOCK] Using mock analysis data');
-      await this.simulateDelay(1500);
-      const mockData = generateMockData();
-      return mockData.analysis;
-    }
+    log('[API] Starting cognitive analysis...');
 
-    try {
-      log('[API] Starting cognitive analysis...');
-
-      const response = await fetch(`${this.baseUrl}/analyze`, {
+    const response = await fetchWithTimeout(
+      `${this.baseUrl}/analyze`,
+      {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text }),
-      });
+      },
+      30_000
+    );
 
-      if (!response.ok) {
-        throw new Error(`Analysis failed: ${response.statusText}`);
-      }
-
-      const result = await response.json();
-      log('[API] Analysis completed');
-
-      return result;
-    } catch (error) {
-      // DEMO
-      if (API_CONFIG.suppressErrors) {
-        log('[DEMO] Network error, using mock data');
-        const mockData = generateMockData();
-        return mockData.analysis;
-      } else {
-        logError('[ERROR] Analysis error:', error);
-        throw error;
-      }
+    if (!response.ok) {
+      throw new Error(`Analysis failed: ${response.status} ${response.statusText}`);
     }
+
+    const result: AnalyzeResponse = await response.json();
+    log('[API] Analysis completed');
+    return result;
   }
 
   async transcribeAndAnalyze(audioUri: string): Promise<{
     transcription: TranscriptionResponse;
     analysis: AnalyzeResponse;
   }> {
-    log('🔄 Starting transcription and analysis pipeline...');
-
+    log('Starting transcription and analysis pipeline...');
     const transcription = await this.transcribeAudio(audioUri);
     const analysis = await this.analyzeText(transcription.text);
-
-    log('✅ Pipeline completed successfully');
-
-    return {
-      transcription,
-      analysis,
-    };
+    log('Pipeline completed successfully');
+    return { transcription, analysis };
   }
 
   async checkServerHealth(): Promise<boolean> {
-    if (API_CONFIG.useMockData) {
-      log('[MOCK] Server health check bypassed (using mock data)');
-      return true;
-    }
-
     try {
-      const response = await fetch(`${this.baseUrl}/docs`, {
-        method: 'GET',
-      });
+      const response = await fetchWithTimeout(
+        `${this.baseUrl}/health`,
+        { method: 'GET' },
+        5_000
+      );
       return response.ok;
-    } catch (error) {
-      if (!API_CONFIG.suppressErrors) {
-        logError('[ERROR] API server not available:', error);
-      }
+    } catch {
+      logError('[ERROR] API server not available');
       return false;
     }
-  }
-
-  private simulateDelay(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
   }
 }
 

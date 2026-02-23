@@ -12,7 +12,10 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.DementiAnalytics.projectatlasnative",
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSAppTransportSecurity": {
+          "NSAllowsArbitraryLoads": true
+        }
       }
     },
     "android": {
@@ -20,7 +23,8 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "usesCleartextTraffic": true
     },
     "web": {
       "bundler": "metro",
@@ -39,8 +43,6 @@
         }
       ],
       "expo-font",
-      "expo-web-browser",
-      "expo-audio",
       "expo-asset"
     ],
     "experiments": {
