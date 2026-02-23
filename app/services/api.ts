@@ -39,7 +39,7 @@ export interface AnalyzeResponse {
 
 export interface TranscriptionResponse {
   text: string;
-  confidence: number;
+  confidence: 1.0;
 }
 
 class ApiService {
