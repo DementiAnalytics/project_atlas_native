@@ -1,6 +1,6 @@
 export interface MockTranscription {
   text: string;
-  confidence: number;
+  confidence: 1.0;
 }
 
 export interface MockAnalysis {
@@ -56,7 +56,7 @@ Disclaimer: Demo-only. Not clinical-grade. Not for diagnosis.`;
   return {
     transcription: {
       text: scenario.text,
-      confidence: 0.85 + Math.random() * 0.15,
+      confidence: 1.0,
     },
     analysis: {
       animal_count: scenario.animal_count,

@@ -9,7 +9,7 @@ export interface ApiConfig {
 export const API_CONFIG: ApiConfig = {
   baseUrl: "http://localhost:8000/",
   useMockData: false,
-  suppressErrors: true,
+  suppressErrors: false,
   logRequests: true,
   logErrors: true,
 };

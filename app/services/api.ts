@@ -1,6 +1,5 @@
 // app/services/api.ts
 import { API_CONFIG } from "../config/api";
-import { cartesiaService } from "./cartesia";
 import { generateMockData } from "./mockData";
 
 const API_BASE_URL = API_CONFIG.baseUrl;
@@ -32,7 +31,7 @@ export interface AnalyzeResponse {
 
 export interface TranscriptionResponse {
   text: string;
-  confidence: number;
+  confidence: 1.0;
 }
 
 class ApiService {
@@ -48,19 +47,36 @@ class ApiService {
       log('[MOCK] Using mock transcription data');
       await this.simulateDelay(1000);
       const mockData = generateMockData(audioUri);
-      return mockData.transcription;
+      return mockData.transcription; 
     }
 
     try {
-      log('[API] Starting audio transcription with Cartesia...');
+      log('[API] Starting audio transcription...');
 
-      // Use Cartesia service for transcription (frontend-based STT)
-      const result = await cartesiaService.transcribeAudio(audioUri);
+      const formData = new FormData();
+      formData.append('file',{
+        uri: audioUri,
+        type: 'audio/wav',
+        name: 'recording.wav',
+      }as any);
+
+      // Call backend
+      const result = await fetch(`${process.env.EXPO_PUBLIC_AZURE_BACKEND}/transcribe`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!result.ok) {
+        throw new Error(`Transcription failed: ${result.statusText}`);
+      }
+
+      const data: TranscriptionResponse = await result.json();
+
       log('[API] Transcription completed:', result.text);
 
-      return result;
+      return data;
     } catch (error) {
-      // In demo mode, silently fall back to mock data
+      // DEMO
       if (API_CONFIG.suppressErrors) {
         log('[DEMO] Transcription error, using mock data');
         const mockData = generateMockData(audioUri);
@@ -101,7 +117,7 @@ class ApiService {
 
       return result;
     } catch (error) {
-      // In demo mode, silently fall back to mock data
+      // DEMO
       if (API_CONFIG.suppressErrors) {
         log('[DEMO] Network error, using mock data');
         const mockData = generateMockData();
