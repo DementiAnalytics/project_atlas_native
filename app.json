@@ -1,16 +1,16 @@
 {
   "expo": {
-    "name": "project_atlas_native",
-    "slug": "project_atlas_native",
+    "name": "Project Atlas",
+    "slug": "project_atlas",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "projectatlasnative",
+    "scheme": "projectatlas",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.DementiAnalytics.projectatlasnative",
+      "bundleIdentifier": "com.DementiAnalytics.projectatlas",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
         "NSAppTransportSecurity": {
@@ -43,7 +43,8 @@
         }
       ],
       "expo-font",
-      "expo-asset"
+      "expo-asset",
+      "expo-build-properties"
     ],
     "experiments": {
       "typedRoutes": true
